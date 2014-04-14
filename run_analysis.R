@@ -1,4 +1,3 @@
-
 ## 1
 dtSubject <- rbind(dtSubjectTrain, dtSubjectTest)
 setnames(dtSubject, "V1", "subject")
@@ -35,7 +34,7 @@ dt$feature <- factor(dt$featureName)
 grepthis <- function(regex) {
   grepl(regex, dt$feature)
 }
-## Features with 2 categories
+
 n <- 2
 y <- matrix(seq(1, n), nrow = n)
 x <- matrix(c(grepthis("^t"), grepthis("^f")), ncol = nrow(y))
@@ -46,10 +45,10 @@ x <- matrix(c(grepthis("BodyAcc"), grepthis("GravityAcc")), ncol = nrow(y))
 dt$featAcceleration <- factor(x %*% y, labels = c(NA, "Body", "Gravity"))
 x <- matrix(c(grepthis("mean()"), grepthis("std()")), ncol = nrow(y))
 dt$featVariable <- factor(x %*% y, labels = c("Mean", "SD"))
-## Features with 1 category
+
 dt$featJerk <- factor(grepthis("Jerk"), labels = c(NA, "Jerk"))
 dt$featMagnitude <- factor(grepthis("Mag"), labels = c(NA, "Magnitude"))
-## Features with 3 categories
+
 n <- 3
 y <- matrix(seq(1, n), nrow = n)
 x <- matrix(c(grepthis("-X"), grepthis("-Y"), grepthis("-Z")), ncol = nrow(y))
