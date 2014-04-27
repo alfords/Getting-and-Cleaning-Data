@@ -11,13 +11,11 @@ if (!file.exists(path)) {
   dir.create(path)
 }
 download.file(url, file.path(path, f))
-
 executable <- file.path("C:", "Program Files (x86)", "7-Zip", "7z.exe")
 parameters <- "x"
 cmd <- paste(paste0("\"", executable, "\""), parameters, paste0("\"", file.path(path, 
                                                                                 f), "\""))
 system(cmd)
-
 pathIn <- file.path(path, "UCI HAR Dataset")
 list.files(pathIn, recursive = TRUE)
 
@@ -25,7 +23,6 @@ dtSubjectTrain <- fread(file.path(pathIn, "train", "subject_train.txt"))
 dtSubjectTest <- fread(file.path(pathIn, "test", "subject_test.txt"))
 dtActivityTrain <- fread(file.path(pathIn, "train", "Y_train.txt"))
 dtActivityTest <- fread(file.path(pathIn, "test", "Y_test.txt"))
-
 fileToDataTable <- function(f) {
   df <- read.table(f)
   dt <- data.table(df)
@@ -41,20 +38,18 @@ setnames(dtSubject, "V1", "subject")
 dtActivity <- rbind(dtActivityTrain, dtActivityTest)
 setnames(dtActivity, "V1", "activityNum")
 dt <- rbind(dtTrain, dtTest)
-
 dtSubject <- cbind(dtSubject, dtActivity)
 dt <- cbind(dtSubject, dt)
+setkey(dt, subject, activityNum)
 
 
 ## 2 Extracts only the measurements on the mean and standard deviation 
 
 dtFeatures <- fread(file.path(pathIn, "features.txt"))
 setnames(dtFeatures, names(dtFeatures), c("featureNum", "featureName"))
-
 dtFeatures <- dtFeatures[grepl("mean\\(\\)|std\\(\\)", featureName)]
 dtFeatures$featureCode <- dtFeatures[, paste0("V", featureNum)]
 head(dtFeatures)
-
 dtFeatures$featureCode
 select <- c(key(dt), dtFeatures$featureCode)
 dt <- dt[, select, with = FALSE]
@@ -73,9 +68,9 @@ setkey(dt, subject, activityNum, activityName)
 dt <- data.table(melt(dt, key(dt), variable.name = "featureCode"))
 dt <- merge(dt, dtFeatures[, list(featureNum, featureCode, featureName)], by = "featureCode", 
             all.x = TRUE)
-
 dt$activity <- factor(dt$activityName)
 dt$feature <- factor(dt$featureName)
+
 grepthis <- function(regex) {
   grepl(regex, dt$feature)
 }
