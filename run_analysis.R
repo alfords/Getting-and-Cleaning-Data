@@ -2,7 +2,6 @@
 
 packages <- c("data.table", "reshape2")
 sapply(packages, require, character.only = TRUE, quietly = TRUE)
-
 path <- getwd()
 path
 
@@ -24,7 +23,6 @@ list.files(pathIn, recursive = TRUE)
 
 dtSubjectTrain <- fread(file.path(pathIn, "train", "subject_train.txt"))
 dtSubjectTest <- fread(file.path(pathIn, "test", "subject_test.txt"))
-
 dtActivityTrain <- fread(file.path(pathIn, "train", "Y_train.txt"))
 dtActivityTest <- fread(file.path(pathIn, "test", "Y_test.txt"))
 
@@ -54,12 +52,10 @@ dtFeatures <- fread(file.path(pathIn, "features.txt"))
 setnames(dtFeatures, names(dtFeatures), c("featureNum", "featureName"))
 
 dtFeatures <- dtFeatures[grepl("mean\\(\\)|std\\(\\)", featureName)]
-
 dtFeatures$featureCode <- dtFeatures[, paste0("V", featureNum)]
 head(dtFeatures)
 
 dtFeatures$featureCode
-
 select <- c(key(dt), dtFeatures$featureCode)
 dt <- dt[, select, with = FALSE]
 
@@ -80,7 +76,6 @@ dt <- merge(dt, dtFeatures[, list(featureNum, featureCode, featureName)], by = "
 
 dt$activity <- factor(dt$activityName)
 dt$feature <- factor(dt$featureName)
-
 grepthis <- function(regex) {
   grepl(regex, dt$feature)
 }
